@@ -1,19 +1,38 @@
 <!DOCTYPE html>
-<html>
+<html lang="ja">
 <head>
-<title>新規ユーザ登録画面</title>
+  <meta charset="UTF-8">
+  <title>新規ユーザ登録画面</title>
 </head>
-
 <body>
-<h1>新規ユーザ登録画面</h1>
+  <h1>新規ユーザ登録画面</h1>
 
-{% csrf_token %}
-<p>ユーザ名<input type="text" name="name" size="15"></p>
-<p>パスワード<input type="text" name="password" size="15"></p>
+  <form method="POST" action="{% url 'mychat:adduser' %}">
+    {% csrf_token %}
+    <p>ユーザ名：<input type="text" name="name" size="15" required></p>
+    <p>パスワード：<input type="password" name="password" required></p>
 
-<input type="submit" value="登録">
-</form>
+    <!-- グループ選択追加 -->
+    <p>グループ選択：
+      <select name="group" required>
+        <option value="" disabled selected>グループを選択してください</option>
+        <option value="1">起業ユーザ</option>
+        <option value="2">就活ユーザ</option>
+      </select>
+    </p>
 
-<div><a href="{% url 'mychat:start' %}">戻る</a></div>
+    <input type="submit" value="登録">
+  </form>
+
+  <!-- 入力にエラーがあればここにメッセージが返される -->
+  {% if error_message %}
+  <ul>
+    {% for message in error_message %}
+    <li style="color:red">{{ message }}</li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+
+  <p><a href="{% url 'mychat:start' %}">戻る</a></p>
 </body>
 </html>
