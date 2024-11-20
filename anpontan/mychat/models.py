@@ -3,16 +3,10 @@ from django.utils import timezone
 
 # Create your models here.
 class User(models.Model):
-    name = models.CharField(max_length=20, null=False, blank=False)
-    password = models.CharField(max_length=20, null=False, blank=False)
-    islogin = models.BooleanField(default=False)
+    name = models.CharField(max_length=50, unique=True)
+    password = models.CharField(max_length=50)
+    group = models.IntegerField(choices=[(1, "起業ユーザ"), (2, "就活ユーザ")], default=1)
 
 
 class Room(models.Model):
     name = models.TextField(null=False, blank=False)
-
-class ChatLog(models.Model):
-    room = models.ForeignKey('Room', on_delete = models.PROTECT, null = False)
-    user = models.ForeignKey('User', on_delete = models.PROTECT, null = False)
-    message = models.TextField(verbose_name = 'メッセージ', blank = True, null = False)
-    date = models.DateTimeField(verbose_name = '投稿日時', default = timezone.now)
