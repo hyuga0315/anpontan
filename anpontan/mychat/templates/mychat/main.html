@@ -1,1 +1,29 @@
-
+<html>
+<head>
+<title>メイン画面</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" ></script>
+</head>
+<body>
+<h1>メイン画面</h1>
+<script>
+    $(document).ready(function() {
+        let user_name = $.cookie("USER") || "None";
+    
+        $('#user_name').text(`ユーザー名：${user_name}`);
+    });
+</script>
+<p id="user_name"></p>
+{% for data in roomlist %}
+<form method="POST" action="{% url 'mychat:chat' id=data.id %}">
+{% csrf_token %}
+ <input type="submit" value="ルーム{{data.name}}">
+</form>
+{% endfor %}
+<ul>
+<p><a href="{% url 'mychat:post' %}">掲示板</a></p>
+<p><a href="{% url 'mychat:createpost' %}">掲示板作成</a></p>
+<p><a href="{% url 'mychat:logout' %}">ログアウト</a></p>
+</ul>
+</body>
+</html> 
