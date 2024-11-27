@@ -1,0 +1,15 @@
+<html>
+<head>
+<title>新規掲示板作成画面</title>
+</head>
+<body>
+<h1>新規掲示板作成画面</h1>
+<form method="POST" action="{% url 'mychat:addroom' %}">
+{% csrf_token %}
+ <p>ルーム名 <input type="text" name="name" size="15"></p>
+ <p>登録するボタン <input type="submit" value="作成"></p>
+</form>
+<li><a href="{% url 'mychat:main' %}">戻る</a></li>
+<hr/>
+</body>
+</html> 
