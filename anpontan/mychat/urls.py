@@ -12,4 +12,5 @@ urlpatterns = [
     path('createroom',views.createRoom,name='createroom'),
     path('addroom',views.addRoom,name='addroom'),
     path('search',views.searchView,name='search'),
+    path('start',views.startView,name='start')
 ] 
