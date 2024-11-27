@@ -22,15 +22,15 @@
 
 <p>掲示板一覧</p>
 {% for data in roomlist %}
-<form method="POST" action="{% url 'mychat:chat' id=data.id %}">
+<form method="POST" action="{% url 'mychat:room' id=data.id %}">
 {% csrf_token %}
  <input type="submit" value="ルーム{{data.name}}">
 </form>
 {% endfor %}
 <ul>
 
-<p><a href="{% url 'mychat:createpost' %}">掲示板作成</a></p>
-<p><a href="{% url 'mychat:logout' %}">ログアウト</a></p>
+<p><a href="{% url 'mychat:createroom' %}">掲示板作成</a></p>
+<p><a href="{% url 'mychat:start' %}">ログアウト</a></p>
 </ul>
 </body>
 </html> 
