@@ -1,14 +1,13 @@
 from django.shortcuts import render
 from . import models
+import urllib
 
 def startView(request):
     template_file='mychat/start.html'
     
-    options={
-        
-    }
-    
-    return render(request, template_file, options)
+    # ここまでで処理が終わらなければ、メイン画面を表示
+    return render(request, template_file)
+
 
 
 def createUser(request):
@@ -78,7 +77,7 @@ def addUser(request):
     # テンプレートを表示する
     return render(request, template_file, options)
 def mainView(request):
-    template_file="mychat/main.html"
+    template_file="mychat/main_1.html"
     back_file="mychat/start.html"
     error_message=[]
 
@@ -92,7 +91,7 @@ def mainView(request):
     #[2] ユーザ名を取得できた場合は、以下を行う。 
     if value is not None:
     #[2](1) データベースからそのユーザ名と完全一致するユーザ情報を取得する。 
-        user = models.Profile.objects.filter(name__exact=value).first()
+        user = models.User.objects.filter(name__exact=value).first()
     #[2](2)ユーザ情報のログイン状態がログイン中(True)ならば認証処理は行わずにメイン画 
     #面に遷移する。（遷移パターンA） 
         if user is not None and user.islogin:
@@ -143,7 +142,7 @@ def mainView(request):
         return render(request,back_file,errors)
 
     #[8] データベースから「ユーザ名」と「パスワード」の両方が完全一致するユーザ情報を取得する。
-    user_info=models.Profile.objects.filter(name__exact=name,password__exact=password).first()
+    user_info=models.User.objects.filter(name__exact=name,password__exact=password).first()
     #[9] 一致するユーザ情報が取得できなかった場合は、「ユーザ名、パスワードが一致しません」と#
     #いうエラーメッセージを用意し、ログイン画面に遷移し、それをメッセージ表示エリアに赤 
     #字で表示する。（遷移パターンE） 
@@ -166,7 +165,7 @@ def mainView(request):
 def logout(request):
     value = request.COOKIES.get('USER')
     if value is not None:
-        user = models.Profile.objects.filter(name=value).first()
+        user = models.User.objects.filter(name=value).first()
         if user is not None:
             user.islogin=False
             user.save()
