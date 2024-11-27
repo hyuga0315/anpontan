@@ -9,12 +9,12 @@
     function init() {
       var map = L.map('mapcontainer', { zoomControl: false });
       var mpoint = [42.353706, 140.979346];
-      map.setView(mpoint, 15);
+      map.setView([42.353706, 140.979346], 12);
       L.tileLayer('https://cyberjapandata.gsi.go.jp/xyz/std/{z}/{x}/{y}.png', {
         attribution: "<a href='https://maps.gsi.go.jp/development/ichiran.html' target='_blank'>地理院タイル</a>"
       }).addTo(map);
       //ポップアップする文字（HTML可、ここでは画像を表示）
-      var sucontents = "埼玉大学です<br><img src='su.jpg' width='500' height='375'>"
+      //var sucontents = "埼玉大学です<br><img src='su.jpg' width='500' height='375'>"
       //ポップアップオブジェクトを作成
       var popup1 = L.popup({ maxWidth: 550 }).setContent(sucontents);
       var popup2 = L.popup().setContent("桜区役所です");
@@ -25,6 +25,6 @@
   </script>
 </head>
 <body onload="init()">
-  <div id="mapcontainer" style="position:absolute;top:0;left:0;right:0;bottom:0;"></div>
+  //<div id="mapcontainer" style="position:absolute;top:0;left:0;right:0;bottom:0;"></div>
 </body>
 </html>
