@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>掲示板検索</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+</head>
+<body>
+<h1>掲示板検索</h1>
+<p id="user_name"></p>
+<script>
+    $(document).ready(function() {
+        let user_name = $.cookie("USER") || "None";
+        $('#user_name').text(`ユーザー名：${user_name}`);
+    });
+</script>
+<!-- 検索フォーム -->
+<search>
+    <form action="{% url 'mychat:search' %}" method="GET">
+        <label for="q">掲示板を検索</label>
+        <input type="search" id="q" name="q" value="{{ request.GET.q }}" />
+        <button type="submit">検索</button>
+    </form>
+</search>
+
+
+<!-- 検索結果の表示 -->
+{% if postlist %}
+    <h2>検索結果</h2>
+    <ul>
+        {% for post in postlist %}
+            <li>
+                <form method="POST" action="{% url 'mychat:post' id=post.id %}">
+                    {% csrf_token %}
+                    <input type="submit" value="掲示板: {{ post.name }}">
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>検索結果はありませんでした。</p>
+{% endif %}
+
+<li><a href="{% url 'mychat:main' %}">戻る</a></li>
+
+</body>
+</html>
