@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from . import models
 
 def startView(request):
     template_file='mychat/start.html'
