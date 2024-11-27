@@ -14,6 +14,12 @@
     });
 </script>
 <p id="user_name"></p>
+<form action="{% url 'mychat:search' %}" method="GET">
+    <button type="submit">検索画面へ
+    </button>
+</form>
+
+<p>掲示板一覧</p>
 {% for data in roomlist %}
 <form method="POST" action="{% url 'mychat:chat' id=data.id %}">
 {% csrf_token %}
@@ -21,7 +27,7 @@
 </form>
 {% endfor %}
 <ul>
-<p><a href="{% url 'mychat:post' %}">掲示板</a></p>
+
 <p><a href="{% url 'mychat:createpost' %}">掲示板作成</a></p>
 <p><a href="{% url 'mychat:logout' %}">ログアウト</a></p>
 </ul>
