@@ -1,0 +1,25 @@
+<html>
+<head>
+<title>掲示板作成結果画面</title>
+</head>
+<body>
+<h1>掲示板作成結果画面</h1>
+
+{% if error_message is not None %}
+<ul>
+{% for mess in error_message %}
+<li style="color:red">{{mess}}</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% if message is not None %}
+<ul>
+{% for mess in message %}
+<li>{{mess}}</li>
+{% endfor %}
+</ul>
+{% endif %}
+<li><a href="{% url 'mychat:main' %}">戻る</a></li>
+<hr/>
+</body>
+</html> 
