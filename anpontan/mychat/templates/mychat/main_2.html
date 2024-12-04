@@ -1,1 +1,36 @@
+#就活側
+<html>
+<head>
+<title>メイン画面</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" ></script>
+</head>
+<body>
+<h1>メイン画面</h1>
+<script>
+    $(document).ready(function() {
+        let user_name = $.cookie("USER") || "None";
+    
+        $('#user_name').text(`ユーザー名：${user_name}`);
+    });
+</script>
+<p id="user_name"></p>
+<form action="{% url 'mychat:search' %}" method="GET">
+    <button type="submit">検索画面へ
+    </button>
+</form>
 
+<p>掲示板一覧</p>
+{% for data in roomlist %}
+<form method="POST" action="{% url 'mychat:room' id=data.id %}">
+{% csrf_token %}
+ <input type="submit" value="ルーム{{data.name}}">
+</form>
+{% endfor %}
+<ul>
+
+<p><a href="{% url 'mychat:createroom' %}">掲示板作成</a></p>
+<p><a href="{% url 'mychat:start' %}">ログアウト</a></p>
+</ul>
+</body>
+</html> 
