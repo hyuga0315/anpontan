@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from . import models
-import urllib
+import urllib.parse
 
 def startView(request):
     template_file='mychat/start.html'
     
     # ここまでで処理が終わらなければ、メイン画面を表示
+            
     return render(request, template_file)
 
 
@@ -31,7 +32,7 @@ def addUser(request):
     # 入力データを取得し、それぞれ代入
     name = request.POST.get("name", "")
     password = request.POST.get("password", "")
-    group_id = request.POST.get("group", "")
+    group_id = request.POST.get("group_id", "")
 
     # ユーザ名が未記入か空文字の時エラーメッセージ
     if not name:
@@ -63,7 +64,7 @@ def addUser(request):
             newinstance = models.User.objects.create(
                 name=name,
                 password=password,
-                group=group_id  # グループ情報を保存
+                group_id=group_id  # グループ情報を保存
             )
             newinstance.save()
             message.append(f"ユーザ {name} を登録しました (グループ: {'起業ユーザ' if group_id == 1 else '就活ユーザ'})")
@@ -77,7 +78,8 @@ def addUser(request):
     # テンプレートを表示する
     return render(request, template_file, options)
 def mainView(request):
-    template_file="mychat/main_1.html"
+    template_file_1 = "mychat/main_1.html"
+    template_file_2 = "mychat/main_2.html"
     back_file="mychat/start.html"
     error_message=[]
 
@@ -95,14 +97,13 @@ def mainView(request):
     #[2](2)ユーザ情報のログイン状態がログイン中(True)ならば認証処理は行わずにメイン画 
     #面に遷移する。（遷移パターンA） 
         if user is not None and user.islogin:
-            roomlist=models.Room.objects.all()
-            options={
-                'roomlist':roomlist
-            }
-            return render(request,template_file,options)
+            if user.group_id == 1:  # グループIDが1の場合
+                return render(request, template_file_1, {"user": user})
+            elif user.group_id == '2':  # グループIDが2の場合
+                return render(request, template_file_2, {"user": user})
+        else:
     #[2](3)ユーザ情報のログイン状態がログイン中でない(False)場合、クッキーからユーザ名 
     #を削除(後述)してから、ログイン画面に遷移する（遷移パターンB） 
-        else:
             response = render(request, back_file, options) 
             response.delete_cookie('USER')   # key は削除したいキー名が入る 
             return response 
@@ -159,7 +160,8 @@ def mainView(request):
         'roomlist':roomlist
     }
     #[11] 更新後、ユーザ名(USERをキー名とする)をクッキー情報として設定しつつメイン画面に遷移する。（遷移パターンF） 
-    response = render(request, template_file, options) 
+    response = render(request, template_file_1 if user_info.group_id == '1' else template_file_2, options)
+ 
     response.set_cookie('USER', urllib.parse.quote(str(name)))  # key, value は保存したいキー名と値 
     return response 
 def logout(request):
