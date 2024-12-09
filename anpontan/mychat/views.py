@@ -99,7 +99,7 @@ def mainView(request):
         if user is not None and user.islogin:
             if user.group_id == 1:  # グループIDが1の場合
                 return render(request, template_file_1, {"user": user})
-            elif user.group_id == '2':  # グループIDが2の場合
+            elif user.group_id == 2:  # グループIDが2の場合
                 return render(request, template_file_2, {"user": user})
         else:
     #[2](3)ユーザ情報のログイン状態がログイン中でない(False)場合、クッキーからユーザ名 
