@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from . import models
 import urllib.parse
+from django.core.files.storage import FileSystemStorage
 
 def startView(request):
     template_file='mychat/start.html'
@@ -97,9 +98,9 @@ def mainView(request):
     #[2](2)ユーザ情報のログイン状態がログイン中(True)ならば認証処理は行わずにメイン画 
     #面に遷移する。（遷移パターンA） 
         if user is not None and user.islogin:
-            if user.group_id == 1:  # グループIDが1の場合
+            if user.group_id == "1":  # グループIDが1の場合
                 return render(request, template_file_1, {"user": user})
-            elif user.group_id == 2:  # グループIDが2の場合
+            elif user.group_id == "2":  # グループIDが2の場合
                 return render(request, template_file_2, {"user": user})
         else:
     #[2](3)ユーザ情報のログイン状態がログイン中でない(False)場合、クッキーからユーザ名 
@@ -161,7 +162,7 @@ def mainView(request):
     }
     #[11] 更新後、ユーザ名(USERをキー名とする)をクッキー情報として設定しつつメイン画面に遷移する。（遷移パターンF） 
     response = render(request, template_file_1 if user_info.group_id == '1' else template_file_2, options)
- 
+
     response.set_cookie('USER', urllib.parse.quote(str(name)))  # key, value は保存したいキー名と値 
     return response 
 def logout(request):
@@ -227,12 +228,20 @@ def roomView(request,id=None):
     return render(request,template_file,options)
 
 def searchView(request):
+    template_file = "mychat/serch.html"
     query = request.GET.get('q', '')
-    if query:
-        roomlist = models.Room.objects.filter(name__icontains=query)  # 検索キーワードが含まれている掲示板を取得
-    else:
-        roomlist = models.Room.objects.all()  # 検索クエリがない場合はすべての掲示板を表示
-    options={
-        'roomlist': roomlist
-    }
-    return render(request, 'mychat/search.html', options)
+
+    try:
+        if query:
+            roomlist = models.Room.objects.filter(name__icontains=query)  # 検索キーワードが含まれている掲示板を取得
+        else:
+            roomlist = models.Room.objects.all()  # 検索クエリがない場合はすべての掲示板を表示
+        # ログで確認
+        print("Room list:", roomlist)
+        options = {
+            'roomlist': roomlist
+        }
+        return render(request, template_file)
+    except Exception as e:
+        print("Error in serchView:", e)  # エラーの詳細を出力
+        raise
