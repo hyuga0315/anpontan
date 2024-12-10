@@ -1,6 +1,42 @@
 <html>
 <head>
 <title>掲示板作成結果画面</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #e6f7ff; /* 柔らかな青系の背景 */
+  }
+  h1 {
+    color: #004080;
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  li {
+    margin: 10px 0;
+    font-size: 16px;
+  }
+  li a {
+    color: #004080;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  li a:hover {
+    text-decoration: underline;
+  }
+  li[style="color:red"] {
+    color: red;
+    font-weight: bold;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 20px 0;
+  }
+</style>
 </head>
 <body>
 <h1>掲示板作成結果画面</h1>
@@ -22,4 +58,4 @@
 <li><a href="{% url 'mychat:main' %}">戻る</a></li>
 <hr/>
 </body>
-</html> 
+</html>
