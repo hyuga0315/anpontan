@@ -2,24 +2,64 @@
 <html>
 <head>
 <title>ユーザ登録結果画面</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f9f9f9;
+  }
+  h1 {
+    color: #333;
+    text-align: center;
+  }
+  ul {
+    list-style-type: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 20px auto;
+  }
+  .error-message {
+    color: #ff0000;
+    background-color: #ffe6e6;
+    border: 1px solid #ffb3b3;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  .success-message {
+    color: #006600;
+    background-color: #e6ffe6;
+    border: 1px solid #b3ffb3;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+  }
+  p {
+    text-align: center;
+  }
+  a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
 </head>
 <body>
 <h1>ユーザ登録結果画面</h1>
 
-<!-- エラーメッセージ表示エリア -->
-{% if error_message is not None %}
-<ul>
+{% if error_message %}
+<ul class="error-message">
 {% for message in error_message %}
-<li style="color:red">{{message}}</li>
+<li>{{ message }}</li>
 {% endfor %}
 </ul>
-{% endif %}
-
-<!-- 成功メッセージ表示エリア -->
-{% if message is not None %}
-<ul>
+{% elif message %}
+<ul class="success-message">
 {% for message in message %}
-<li>{{message}}</li>
+<li>{{ message }}</li>
 {% endfor %}
 </ul>
 {% endif %}
@@ -27,4 +67,3 @@
 <p><a href="{% url 'mychat:main' %}">戻る</a></p>
 </body>
 </html>
-
