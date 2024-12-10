@@ -1,36 +1,135 @@
-#起業側
+<!DOCTYPE html>
 <html>
 <head>
-<title>メイン画面</title>
+<title>起業ユーザメイン画面</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f0f4f8; /* 柔らかな青系の背景 */
+  }
+  h1 {
+    color: #004080;
+    text-align: center;
+  }
+
+  /* ハンバーガーメニュー */
+  .menu-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    width: 30px;
+  }
+  .menu-icon div {
+    height: 4px;
+    background-color: #004080;
+    margin: 4px 0;
+    border-radius: 2px;
+  }
+
+  /* メニューコンテンツ */
+  .menu-content {
+    display: none;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    text-align: left;
+  }
+  .menu-content p {
+    margin: 5px 0;
+    color: #004080;
+  }
+  .menu-content a {
+    color: #0066cc;
+    text-decoration: none;
+    font-weight: bold;
+    display: block;
+    margin-top: 10px;
+  }
+  .menu-content a:hover {
+    text-decoration: underline;
+  }
+
+  /* メニュー表示切り替え */
+  .menu-active {
+    display: block;
+  }
+
+  /* ボタンとリンクのスタイル */
+  button, input[type="submit"] {
+    background-color: #ffffff;
+    color: #004080;
+    border: 1px solid #004080;
+    padding: 10px 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 10px 0;
+  }
+  button:hover, input[type="submit"]:hover {
+    background-color: #004080;
+    color: #ffffff;
+  }
+  a {
+    color: #004080;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  a:hover {
+    text-decoration: underline;
+  }
+</style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" ></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
+<script>
+  $(document).ready(function() {
+    // ハンバーガーメニューのトグル
+    $('.menu-icon').click(function() {
+      $('.menu-content').toggleClass('menu-active');
+    });
+
+    // クッキーからユーザー名を取得
+    let user_name = $.cookie("USER") || "None";
+    $('#user_name_display').text(`ユーザー名：${user_name}`);
+  });
+</script>
 </head>
 <body>
-<h1>メイン画面</h1>
-<script>
-    $(document).ready(function() {
-        let user_name = $.cookie("USER") || "None";
-    
-        $('#user_name').text(`ユーザー名：${user_name}`);
-    });
-</script>
-<p id="user_name"></p>
+<h1>メイン画面（起業ユーザ）</h1>
+
+<!-- ハンバーガーメニュー -->
+<div class="menu-icon">
+  <div></div>
+  <div></div>
+  <div></div>
+</div>
+
+<!-- メニューコンテンツ -->
+<div class="menu-content">
+  <p id="user_name_display"></p>
+  <a href="{% url 'mychat:start' %}">ログアウト</a>
+</div>
+
+<!-- メインコンテンツ -->
 <form action="{% url 'mychat:search' %}" method="GET">
-    <button type="submit">検索画面へ
-    </button>
+  <button type="submit">検索画面へ</button>
 </form>
 
 <p>掲示板一覧</p>
 {% for data in roomlist %}
 <form method="POST" action="{% url 'mychat:room' id=data.id %}">
-{% csrf_token %}
- <input type="submit" value="ルーム{{data.name}}">
+  {% csrf_token %}
+  <input type="submit" value="ルーム{{ data.name }}">
 </form>
 {% endfor %}
-<ul>
-
 <p><a href="{% url 'mychat:createroom' %}">掲示板作成</a></p>
-<p><a href="{% url 'mychat:start' %}">ログアウト</a></p>
-</ul>
 </body>
-</html> 
+</html>
