@@ -4,6 +4,64 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>掲示板検索</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        #search-box {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="search"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+        a {
+            text-decoration: none;
+            color: #007BFF;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js"></script>
 </head>
@@ -16,26 +74,23 @@
         $('#user_name').text(`ユーザー名：${user_name}`);
     });
 </script>
+
 <!-- 検索フォーム -->
-<search>
+<div id="search-box">
     <form action="{% url 'mychat:search' %}" method="GET">
-        <label for="q">掲示板を検索</label>
-        <input type="search" id="q" name="q" value="{{ request.GET.q }}" />
+        <label for="q">掲示板を検索:</label>
+        <input type="search" id="q" name="q" value="{{ request.GET.q }}" placeholder="キーワードを入力" />
         <button type="submit">検索</button>
     </form>
-</search>
-
+</div>
 
 <!-- 検索結果の表示 -->
-{% if postlist %}
+{% if roomlist %}
     <h2>検索結果</h2>
     <ul>
-        {% for post in postlist %}
+        {% for room in roomlist %}
             <li>
-                <form method="POST" action="{% url 'mychat:post' id=post.id %}">
-                    {% csrf_token %}
-                    <input type="submit" value="掲示板: {{ post.name }}">
-                </form>
+                <a href="{% url 'mychat:room' room.id %}">掲示板: {{ room.name }}</a>
             </li>
         {% endfor %}
     </ul>
