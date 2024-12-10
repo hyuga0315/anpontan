@@ -9,4 +9,5 @@ class User(models.Model):
     islogin = models.BooleanField(default=False)
 
 class Room(models.Model):
-    name = models.TextField(null=False, blank=False)
+    name = models.TextField(unique=True, null=False, blank=False)  # 掲示板名
+    comment = models.TextField(null=True, blank=True)             # コメント（オプション）
