@@ -1,27 +1,109 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ログイン画面</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" type="text/css" href = "css/style.css">
+<title>ログイン画面</title>
+<style>
+    /* 全体の背景色とフォント設定 */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f0f4f8;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    
+    /* コンテナのスタイル */
+    form {
+        background-color: #ffffff;
+        padding: 20px 30px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 300px;
+        text-align: center;
+        margin-bottom: 20px; /* 下部にスペースを追加 */
+    }
+    
+    /* 見出しのスタイル */
+    h1 {
+        font-size: 24px;
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    /* フォーム要素のスタイル */
+    form p {
+        margin: 10px 0;
+    }
+    
+    input[type="text"], 
+    input[type="password"] {
+        width: 100%;
+        padding: 8px 12px;
+        margin-top: 5px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+    
+    /* ボタンスタイル */
+    input[type="submit"] {
+        background-color: #007bff;
+        color: #ffffff;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    input[type="submit"]:hover {
+        background-color: #0056b3;
+    }
+    
+    /* 新規ユーザー登録リンク */
+    .link-box {
+        text-align: center;
+    }
+    
+    .link-box a {
+        display: block; /* リンクをブロック表示にする */
+        margin-top: 10px;
+        text-decoration: none;
+        color: #007bff;
+        font-size: 14px;
+    }
+    
+    .link-box a:hover {
+        text-decoration: underline;
+    }
+    </style>
+    
 </head>
 <body>
-  <h1>ログイン画面</h1>
-
-  <form method="POST" action="{%url 'mychat:main'%}">
+    <h1>M WORK ログイン画面</h1>
+    <!-- ログインフォーム -->
+    <form method="POST" action="{%url 'mychat:main'%}">
     {% csrf_token %}
-  <p>ユーザー名<input type="text" name="name" size="15"></p>
-  <p>
-    パスワード<input type="password" name="password" size"15">
-  </p>
-  <p>
-    <input type="hidden" name="login" value="on">
-  </p>
-  <p>
-    <input type="submit" value="ログイン">
-  </p>
-  </form>
+    <p>ユーザー名<input type="text" name="name" size="15"></p>
+    <p>パスワード<input type="password" name="password" size"15"></p>
+    <p><input type="hidden" name="login" value="on"></p>
+    <p><input type="submit" value="ログイン"></p>
+    </form>
 
-  <p><a href="{%url 'mychat:createuser'%}">新規ユーザー登録</a></p>
+    <!-- 新規登録リンク -->
+    <div class="link-box">
+    <a href="{%url 'mychat:createuser'%}">新規ユーザー登録</a>
+    </div>
 </body>
+
 </html>
