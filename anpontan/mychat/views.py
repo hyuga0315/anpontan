@@ -1,6 +1,8 @@
 from django.shortcuts import render, redirect
+from urllib.parse import unquote
 from . import models
 import urllib.parse
+from .models import Room
 from django.core.files.storage import FileSystemStorage
 
 def startView(request):
@@ -78,108 +80,97 @@ def addUser(request):
 
     # テンプレートを表示する
     return render(request, template_file, options)
+
 def mainView(request):
     template_file_1 = "mychat/main_1.html"
     template_file_2 = "mychat/main_2.html"
-    back_file="mychat/start.html"
-    error_message=[]
+    back_file = "mychat/start.html"
+    error_message = []
 
-    #[1] クッキー情報(後述)からユーザ名(USERをキー名とする)を取得する。 
-    cookie_value = request.COOKIES.get('USER') 
-    if cookie_value is not None:
-        value = urllib.parse.unquote(cookie_value)
-    else:
-        value=None
-    options={}
-    #[2] ユーザ名を取得できた場合は、以下を行う。 
-    if value is not None:
-    #[2](1) データベースからそのユーザ名と完全一致するユーザ情報を取得する。 
+    # [1] クッキーからユーザ名を取得
+    cookie_value = request.COOKIES.get('USER')
+    value = urllib.parse.unquote(cookie_value) if cookie_value else None
+
+    # [2] ユーザ名が取得できた場合
+    if value:
         user = models.User.objects.filter(name__exact=value).first()
-    #[2](2)ユーザ情報のログイン状態がログイン中(True)ならば認証処理は行わずにメイン画 
-    #面に遷移する。（遷移パターンA） 
-        if user is not None and user.islogin:
-            if user.group_id == "1":  # グループIDが1の場合
-                return render(request, template_file_1, {"user": user})
-            elif user.group_id == "2":  # グループIDが2の場合
-                return render(request, template_file_2, {"user": user})
+
+        if user and user.islogin:
+            # ルームリストを取得
+            roomlist = Room.objects.all()  # すべてのルームを取得
+            # グループIDに応じてメイン画面に遷移
+            template_file = template_file_1 if user.group_id == "1" else template_file_2
+            return render(request, template_file, {"user": user, "roomlist": roomlist})
         else:
-    #[2](3)ユーザ情報のログイン状態がログイン中でない(False)場合、クッキーからユーザ名 
-    #を削除(後述)してから、ログイン画面に遷移する（遷移パターンB） 
-            response = render(request, back_file, options) 
-            response.delete_cookie('USER')   # key は削除したいキー名が入る 
-            return response 
-    #[3] フォームのデータとしてユーザ名、パスワード、ログインフラグを取得し、内部変数user、 
-    #password、login にそれぞれ代入する。ログインフラグが取得できなかった場合はNoneでは 
-    #なく"off"を値として代入する。 
-    if "name" in request.POST:
-        name=request.POST.get("name")
-    else:
-        name = None
-    if "password" in request.POST:
-        password=request.POST.get("password")
-    else:
-        password = None
-    if "login" in request.POST:
-        login=request.POST.get("login")
-    else:
-        login = 'off' 
+            # ログイン状態でない場合、クッキーを削除してログイン画面に遷移
+            response = render(request, back_file)
+            response.delete_cookie('USER')
+            return response
+        
+    # [3] フォームデータの処理
+    name = request.POST.get("name", "").strip()
+    password = request.POST.get("password", "").strip()
+    login = request.POST.get("login", "off")
 
-    #[4] ログインフラグが "on"ではない 時は、ログイン画面に遷移する。（遷移パターンC） 
     if login != 'on':
-        #error_message.append("ここ")
-        options = {"error_message":error_message}
-        return render(request,back_file,options)
+        error_message.append("ログインフラグが有効ではありません")
+        return render(request, back_file, {"error_message": error_message})
 
-    #[5] ユーザ名が取得できない場合は「ユーザ名が入力されていません」というエラーメッセージ 
-    #を用意する。 
-    if name is None or name=='':
+    if not name:
         error_message.append("ユーザー名が入力されていません")
-    #[6] パスワードが取得できない場合は「パスワードが入力されていません」というエラーメッセージを用意する。
-    if password is None or password=='':
+    if not password:
         error_message.append("パスワードが入力されていません")
-    #[7] [5][6]で入力エラーのメッセージが１つでも用意されたならば、それをテンプレートに渡す 
-    #（遷移パターンD） 
-    if len(error_message) > 0:
-        errors = {'error_message':error_message}
-        return render(request,back_file,errors)
+    if error_message:
+        return render(request, back_file, {"error_message": error_message})
 
-    #[8] データベースから「ユーザ名」と「パスワード」の両方が完全一致するユーザ情報を取得する。
-    user_info=models.User.objects.filter(name__exact=name,password__exact=password).first()
-    #[9] 一致するユーザ情報が取得できなかった場合は、「ユーザ名、パスワードが一致しません」と#
-    #いうエラーメッセージを用意し、ログイン画面に遷移し、それをメッセージ表示エリアに赤 
-    #字で表示する。（遷移パターンE） 
-    if user_info is None:
+    # [4] ユーザ認証
+    user_info = models.User.objects.filter(name__exact=name, password__exact=password).first()
+    if not user_info:
         error_message.append("ユーザー名、パスワードが一致しません")
-        errors={'error_message':error_message}
-        return render(request,back_file,errors)
-    #[10] 一致するユーザ情報が取得できた場合には、そのユーザ情報のログイン状態をTrueにして、データベースを更新する。 
+        return render(request, back_file, {"error_message": error_message})
+
+    # [5] ログイン状態を更新
     user_info.islogin = True
     user_info.save()
 
-    roomlist=models.Room.objects.all()
-    options={
-        'roomlist':roomlist
-    }
-    #[11] 更新後、ユーザ名(USERをキー名とする)をクッキー情報として設定しつつメイン画面に遷移する。（遷移パターンF） 
-    response = render(request, template_file_1 if user_info.group_id == '1' else template_file_2, options)
+    # [6] クッキー設定とメイン画面への遷移
+    response = render(
+        request, template_file_1 if user_info.group_id == "1" else template_file_2, {"user": user_info}
+    )
+    response.set_cookie('USER', urllib.parse.quote(name))
+    return response
 
-    response.set_cookie('USER', urllib.parse.quote(str(name)))  # key, value は保存したいキー名と値 
-    return response 
 def logout(request):
+    # クッキーからユーザ情報取得
     value = request.COOKIES.get('USER')
-    if value is not None:
-        user = models.User.objects.filter(name=value).first()
-        if user is not None:
-            user.islogin=False
+
+    if value:
+        value_data = urllib.parse.unquote(value)
+        user = models.User.objects.filter(name__exact=value_data).first()
+        if user:
+            user.islogin = False
             user.save()
-    return redirect('/mychat')
+
+    # クッキーを削除してスタート画面にリダイレクト
+    response = redirect('/mychat')
+    response.delete_cookie('USER')
+    return response
 
 def createRoom(request):
-    template_file="mychat/createroom.html"
-    options={
+    template_file = "mychat/createroom.html"
+    error_message = []
 
-    }
-    return render(request,template_file,options)
+    if request.method == "POST":
+        room_name = request.POST.get("name", "").strip()
+        if not room_name:
+            error_message.append("ルーム名を入力してください。")
+        elif Room.objects.filter(name=room_name).exists():
+            error_message.append("このルーム名は既に使用されています。")
+        else:
+            Room.objects.create(name=room_name)
+            return redirect('mychat:main')  # 作成後にメイン画面にリダイレクト
+
+    return render(request, template_file, {"error_message": error_message})
 
 def addRoom(request):
     template_file="mychat/addroom.html"
