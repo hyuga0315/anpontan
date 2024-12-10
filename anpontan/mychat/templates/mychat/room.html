@@ -1,10 +1,87 @@
-<html>
+<!DOCTYPE html>
+<html lang="ja">
 <head>
-<title>掲示板</title>
+    <meta charset="UTF-8">
+    <title>掲示板</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+        }
+
+        .post {
+            border-bottom: 1px solid #ccc;
+            padding: 10px 0;
+        }
+
+        .post img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .back-link {
+            text-decoration: none;
+            color: #007B9E;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-<h1>掲示板</h1>
-<li><a href="{% url 'mychat:main' %}">戻る</a></li>
-<hr/>
+    <h1>掲示板: {{ room.name }}</h1>
+
+    <!-- 投稿フォーム -->
+    <form action="{% url 'mychat:room' room.id %}" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="name">名前:</label>
+        <input type="text" name="name" id="name" required>
+        <br>
+        <label for="comment">コメント:</label>
+        <textarea name="comment" id="comment" required></textarea>
+        <br>
+        <label for="image">画像:</label>
+        <input type="file" name="image" id="image">
+        <br>
+        <input type="submit" value="投稿">
+    </form>
+
+    <!-- 投稿内容の表示部分 -->
+    <div id="posts">
+        {% for post in posts %}
+        <div class="post">
+            <p><strong>{{ post.name }}</strong> ({{ post.created_at|date:"Y-m-d H:i:s" }})</p>
+            <p>{{ post.comment }}</p>
+            {% if post.image %}
+            <img src="{{ post.image.url }}" alt="投稿画像">
+            {% endif %}
+        </div>
+        {% endfor %}
+        {% if posts|length == 0 %}
+        <p>まだ投稿がありません。</p>
+        {% endif %}
+    </div>
+
+    <li><a href="{% url 'mychat:main' %}" class="back-link">戻る</a></li>
 </body>
-</html> 
+</html>
