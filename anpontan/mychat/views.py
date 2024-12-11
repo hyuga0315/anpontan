@@ -219,7 +219,7 @@ def roomView(request,id=None):
     return render(request,template_file,options)
 
 def searchView(request):
-    template_file = "mychat/serch.html"
+    template_file = "mychat/search.html"
     query = request.GET.get('q', '')
 
     try:
@@ -232,7 +232,7 @@ def searchView(request):
         options = {
             'roomlist': roomlist
         }
-        return render(request, template_file)
+        return render(request, template_file,options)
     except Exception as e:
         print("Error in serchView:", e)  # エラーの詳細を出力
         raise
